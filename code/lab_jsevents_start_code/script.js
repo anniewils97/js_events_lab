@@ -1,36 +1,60 @@
-const button = document.querySelector('#enter');
+const todoForm = document.querySelector('#todo-form');
 const textInput = document.querySelector('#new-todo');
-const todolist = document.querySelector('#list');
+const todoList = document.querySelector('#list');
+const completedList = document.querySelector('#completed-list');
 
-button.addEventListener('click', (event) => {
+todoForm.addEventListener('submit', (event) => {
     event.preventDefault();
-    console.log("button clicked")
-})
+    addItem(textInput.value);
+    textInput.value = ''; // Clear the input field
+});
 
-textInput.addEventListener('input', (event) => {
-    todolist.classList.add(event.target.value);
-    const newListItem = document.createElement("li");
-    newListItem.innerText = event.target.value;
-    todolist.appendChild(newListItem);
-    // newListItem.appendChild(deleteButton);
-})
-
-const createCompleteButton = (toDoItem) => {
-    const completeButton = document.createElement("button");
-    completeButton.innerText = "Completed";
-    completeButton.addEventListener('click', (event) => {
-        markAsCompleted(toDoItem);
-    })
-        return completeButton;
-
+const addItem = (input) => {
+    if (input.trim() !== '') {
+        const newListItem = createListItem(input);
+        todoList.appendChild(newListItem);
     }
+};
 
-const createDeleteButton = (toDoItem) => {
-    const deleteButton = document.createElement("button");
-    deleteButton.innerText = 'Delete';
-    deleteButton.addEventListener('click', (event) => {
-        toDoItem.remove();
-        });
+const createListItem = (input) => {
+    const newListItem = document.createElement('li');
+    newListItem.innerText = input;
 
-    return deleteButton;
-}
+    const deleteButton = createButton('Delete', () => {
+        newListItem.remove();
+    });
+
+    const completeButton = createButton('Complete', () => {
+        markAsCompleted(newListItem);
+    });
+
+    newListItem.appendChild(deleteButton);
+    newListItem.appendChild(completeButton);
+
+    return newListItem;
+};
+
+const createButton = (input, onClick) => {
+    const button = document.createElement('button');
+    button.innerText = input;
+    button.addEventListener('click', onClick);
+    return button;
+};
+
+const markAsCompleted = (item) => {
+    item.classList.toggle('completed');
+    if (item.classList.contains('completed')) {
+        completedList.appendChild(item);
+    } else {
+        todoList.appendChild(item);
+    }
+};
+
+const showDateButton = document.createElement('button');
+showDateButton.innerText = 'Show Date';
+showDateButton.addEventListener('click', () => {
+    const currentDate = new Date();
+    alert(`Today's date is: ${currentDate.toDateString()}`);
+});
+
+document.body.appendChild(showDateButton);
